@@ -17,7 +17,7 @@ class MovieListActivity : AppCompatActivity(), MovieListContract.View {
     @BindView(R.id.recyclerView) lateinit var recyclerView: RecyclerView
     @BindView(R.id.refreshLayout) lateinit var refreshLayout: SwipeRefreshLayout
     @BindView(R.id.errorLayout) lateinit var errorLayout: View
-    private var list = ArrayList<Movie>();
+    private val list = ArrayList<Movie>();
     val movieAdapter = MovieAdapter(list)
     @Inject lateinit var presenter: MovieListPresenter
     override fun onCreate(savedInstanceState: Bundle?) {

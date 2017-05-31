@@ -2,15 +2,19 @@ package com.example.picked.hellokotlin.ui.movie
 
 import com.example.picked.hellokotlin.data.Movie
 import com.example.picked.hellokotlin.service.MovieService
+import io.reactivex.ObservableSource
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.functions.Consumer
+import io.reactivex.functions.Function
+import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class MovieListPresenter @Inject constructor(var movieService: MovieService
-                                             , var view: MovieListContract.View
-                                             , var movieList: MutableList<Movie>
-                                             , var compositeDisposable: CompositeDisposable)
+class MovieListPresenter @Inject constructor(val movieService: MovieService
+                                             , val view: MovieListContract.View
+                                             , val movieList: MutableList<Movie>
+                                             , val compositeDisposable: CompositeDisposable)
     : MovieListContract.Action {
 
     override fun start() = reLoadContent()
@@ -22,13 +26,14 @@ class MovieListPresenter @Inject constructor(var movieService: MovieService
         val subscribe = movieService.getMovieList()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .doOnNext {
-                    movieList.addAll(it)
-                    view.updateList()
-                }
-                .doOnError { view.displayError() }
                 .doFinally { view.dismissProgress() }
-                .subscribe()
+                .subscribeBy(
+                        onNext = {
+                            movieList.addAll(it)
+                            view.updateList()
+                        }
+                        , onError = { view.displayError() }
+                )
         compositeDisposable.add(subscribe)
     }
 
