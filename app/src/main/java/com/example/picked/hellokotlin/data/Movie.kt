@@ -1,6 +1,5 @@
 package com.example.picked.hellokotlin.data
 
-import javax.annotation.Generated
 import com.google.gson.annotations.SerializedName
 
 @javax.annotation.Generated("com.robohorse.robopojogenerator")

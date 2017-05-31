@@ -7,34 +7,31 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class MovieListPresenter : MovieListContract.Action {
-    @Inject lateinit var movieService: MovieService
-    @Inject lateinit var view: MovieListContract.View
-    @Inject lateinit var movieList: MutableList<Movie>
-    @Inject lateinit var compositeDisposable: CompositeDisposable
+class MovieListPresenter @Inject constructor(var movieService: MovieService
+                                             , var view: MovieListContract.View
+                                             , var movieList: MutableList<Movie>
+                                             , var compositeDisposable: CompositeDisposable)
+    : MovieListContract.Action {
 
-    @Inject
-    constructor(movieService: MovieService, view: MovieListContract.View, movieList: MutableList<Movie>, compositeDisposable: CompositeDisposable) {
-        this.movieService = movieService
-        this.view = view
-        this.movieList = movieList
-        this.compositeDisposable = compositeDisposable
-    }
+    override fun start() = reLoadContent()
 
-
-    override fun start() {
+    private fun reLoadContent() {
+        view.displayContent()
+        movieList.clear()
+        view.dismissProgress()
         val subscribe = movieService.getMovieList()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .doOnNext {
                     movieList.addAll(it)
                     view.updateList()
-                }.subscribe()
+                }
+                .doOnError { view.displayError() }
+                .doFinally { view.dismissProgress() }
+                .subscribe()
         compositeDisposable.add(subscribe)
     }
 
-    override fun close() {
-        compositeDisposable.dispose()
-    }
+    override fun close() = compositeDisposable.dispose()
 
 }
