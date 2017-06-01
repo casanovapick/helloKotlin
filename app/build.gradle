@@ -22,6 +22,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    configurations.all {
+        resolutionStrategy.force "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    }
 }
 kapt {
     generateStubs = true
@@ -50,6 +53,11 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:2.11"
     //Unit Test
     testCompile 'junit:junit:4.12'
+    testCompile 'org.jetbrains.spek:spek-junit-platform-engine:1.1.2'
+    testCompile 'org.junit.platform:junit-platform-runner:1.0.0-M4'
+    testCompile 'org.jetbrains.spek:spek-api:1.1.2'
+    testCompile 'org.mockito:mockito-core:2.8.9'
+    testCompile 'com.nhaarman:mockito-kotlin:1.4.0'
     //Android Test (UI Test)
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
@@ -58,3 +66,4 @@ dependencies {
 repositories {
     mavenCentral()
 }
+

@@ -2,11 +2,8 @@ package com.example.picked.hellokotlin.ui.movie
 
 import com.example.picked.hellokotlin.data.Movie
 import com.example.picked.hellokotlin.service.MovieService
-import io.reactivex.ObservableSource
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.functions.Consumer
-import io.reactivex.functions.Function
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
@@ -32,7 +29,10 @@ class MovieListPresenter @Inject constructor(val movieService: MovieService
                             movieList.addAll(it)
                             view.updateList()
                         }
-                        , onError = { view.displayError() }
+                        ,
+                        onError = {
+                            view.displayError()
+                        }
                 )
         compositeDisposable.add(subscribe)
     }
